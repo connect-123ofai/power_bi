@@ -1,0 +1,36 @@
+Create a measures Table. In that table crates these measures.
+
+1) Cumulative Users = 
+CALCULATE(
+    [NewlyAddedUsers],
+    FILTER(
+        ALL(users_data),
+        users_data[timestamp] <= MAX(users_data[timestamp])
+    )
+)
+
+2)
+NewlyAddedUsers = DISTINCTCOUNT(users_data[email]) + 0
+
+
+3)
+User Variance = 
+[NewlyAddedUsers] - [Users Last Month]
+
+4)
+User Variance % = 
+DIVIDE([User Variance], [Users Last Month], 0)
+
+5)
+Users Last Month = 
+CALCULATE(
+    'MeasuresTable'[NewlyAddedUsers],
+    PARALLELPERIOD('users_data'[timestamp].[Date], -1, MONTH)
+) + 0
+
+5)
+MeasuresTable = GENERATESERIES(1,1)
+
+
+IN the users_data table create a new mesure
+QuarterName = "Q" & FORMAT(users_data[timestamp], "q yyyy")
